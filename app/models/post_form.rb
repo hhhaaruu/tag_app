@@ -2,7 +2,7 @@ class PostForm
   include ActiveModel::Model
 
   attr_accessor(
-     :text, :image, :id, :created_at, :updated_at
+     :text, :image, :id, :created_at, :updated_at, :tag_name
   )
 
   with_options presence: true do
@@ -11,7 +11,11 @@ class PostForm
   end
 
   def save
-    Post.create(text: text, image: image)
+    post = Post.create(text: text, image: image)
+    if tag_name.present?
+      tag = Tag.where(tag_name: tag_name).first_or_initialize
+      tag.save
+      PostTagRelation.create(tag_id: tag.id, post_id: post.id)
   end
 
   def update(params, post)
