@@ -37,6 +37,17 @@ class PostsController < ApplicationController
     end
   end
 
+  def search
+    ## フォーム入力が空の場合nilを返す
+    return nil if params[:keyword] == ""
+
+    ## Tagモデルより入力されたtag_nameより逐次検索を行いtagへ代入する
+    tag = Tag.where(['tag_name LIKE ?', "%#{params[:keyword]}%"] )
+
+    ## renderメソッドを使用してjsonの情報を返す
+    render json:{ keyword: tag }
+  end
+
   private
   def post_form_params
     params.require(:post_form).permit(:text, :image, :tag_name)
